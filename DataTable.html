@@ -1,0 +1,63 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+<script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" type="text/javascript"></script>
+<script>
+var slalomOrders = {} || slalomOrders;
+
+$(document).ready(function() {
+
+  		$.ajax({
+    		url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Orders')/items?$select=*,CSAgent/Name,CSAgent/Title&$expand=CSAgent/Id",
+    		method: "GET",
+    		headers: {"accept": "application/json;odata=verbose"},
+			success: function(xData, request){
+         	slalomOrders.Table = $('table#SlalomOrders').DataTable({
+            "bDestroy": true,
+            "bProcessing": true,
+            "aLengthMenu": [[10, 20, 30], [10, 20, 30]], //Dropdown choices for how many items to show per page
+            "iDisplayLength": 10, //How many items to display by default
+            "aaData": xData.d.results, //Data to process in the table
+            "order": [[ 2, "asc" ]],
+            "aoColumns": [
+            { "mData": "OrderNumber" },
+            { "mData": "OrderAmount" },
+            { "mData": function(data, type, val){
+                var items = [];
+                console.log(data);
+                for(var i=0;i < data.Items.results.length; i++){
+                	items.push(data.Items.results[i]);
+                }
+                return items;
+            }},
+            { "mData": "CSAgent.Title" },
+            { "mData": "OrderStatus" },
+            { "mData": function(data, type, val){
+                var available = moment(data.Last_x0020_Update).utcOffset(-240).format('MM/DD/YY');
+                return available;
+            }}
+            ]
+            });
+            
+        },    	error: function(message){
+    			console.log(message); //Error message for AJAX call
+    		}
+  		});
+} );
+
+
+</script>
+
+<table id="SlalomOrders" class="stripe" cellspacing="0" width="100%">
+	<thead>
+		<tr>
+			<td>Order Number</td>
+			<td>Order Amount</td>
+			<td>Items</td>
+			<td>Customer Service Agent</td>
+			<td>Order Status</td>
+			<td>Last Updated</td>
+		</tr>
+	</thead>
+	
+</table>
