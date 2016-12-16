@@ -1,0 +1,46 @@
+﻿<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script>
+$(document).ready(function() {
+
+  		$.ajax({
+    		//url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Orders')/items?$select=*", //Gets Orders
+    		url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Orders')/items?$select=*,CSAgent/Id,CSAgent/Title&$expand=CSAgent/Id", //Gets Orders
+    		method: "GET",
+    		headers: {"accept": "application/json;odata=verbose"},
+			success: function(xData, request){
+				console.log(xData);
+				var html = [];
+				
+				for(var i=0; i < xData.d.results.length; i++){
+					//Original - data needs to be parsed
+					//html.push("<tr><td>"+xData.d.results[i].OrderNumber+"</td><td>"+xData.d.results[i].OrderAmount+"</td><td>"+xData.d.results[i].CSAgentId+"</td><td>"+xData.d.results[i].OrderStatus+"</td><td>"+xData.d.results[i].Last_x0020_Update+"</td><td>"+xData.d.results[i].Items+"</td></tr>");
+					//Get people's names
+					//html.push("<tr><td>"+xData.d.results[i].OrderNumber+"</td><td>"+xData.d.results[i].OrderAmount+"</td><td>"+xData.d.results[i].CSAgent.Title+"</td><td>"+xData.d.results[i].OrderStatus+"</td><td>"+xData.d.results[i].Last_x0020_Update+"</td><td>"+xData.d.results[i].Items+"</td></tr>");
+					//Get all the items
+					var allItems = _.flatten(xData.d.results[i].Items.results)
+					html.push("<tr><td>"+xData.d.results[i].OrderNumber+"</td><td>"+xData.d.results[i].OrderAmount+"</td><td>"+xData.d.results[i].CSAgent.Title+"</td><td>"+xData.d.results[i].OrderStatus+"</td><td>"+xData.d.results[i].Last_x0020_Update+"</td><td>"+allItems+"</td></tr>");
+
+				}
+				$('table#SlalomOrders').append(html); //Append stringifyed text to WebDetails DIV 
+            	//console.log(xData); //Log xData to console
+        	},    	
+        	error: function(message){
+    			console.log(message); //Error message for AJAX call
+    		}
+  		});
+} );
+</script>
+
+<table id="SlalomOrders" border="1">
+	<thead>
+		<tr>
+			<td>Order Number</td>
+			<td>Order Amount</td>
+			<td>CS Agent</td>
+			<td>Order Status</td>		
+			<td>Last Update</td>
+			<td>Items</td>
+		</tr>
+	</thead>
+</table>

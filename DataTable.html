@@ -1,14 +1,15 @@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
-<script src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" type="text/javascript"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" type="text/javascript"></script>
+﻿<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" type="text/javascript"></script>
 <script>
 var slalomOrders = {} || slalomOrders;
 
 $(document).ready(function() {
 
   		$.ajax({
-    		url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Orders')/items?$select=*,CSAgent/Name,CSAgent/Title&$expand=CSAgent/Id",
+    		//url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Orders')/items?$select=*,CSAgent/Name,CSAgent/Title&$expand=CSAgent/Id",
+    		url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/lists/getbytitle('Orders')/items?$select=*,CSAgent/Name,CSAgent/Title&$expand=CSAgent/Id&$filter=OrderStatus eq 'Shipped'",
     		method: "GET",
     		headers: {"accept": "application/json;odata=verbose"},
 			success: function(xData, request){
@@ -24,7 +25,7 @@ $(document).ready(function() {
             { "mData": "OrderAmount" },
             { "mData": function(data, type, val){
                 var items = [];
-                console.log(data);
+                //console.log(data);
                 for(var i=0;i < data.Items.results.length; i++){
                 	items.push(data.Items.results[i]);
                 }

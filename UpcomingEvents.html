@@ -1,0 +1,143 @@
+﻿<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" type="text/javascript"></script>
+<style>
+.eventItem{
+	clear:both;
+	border-top: 1px solid #b8d4ea;
+	padding-bottom:15px;
+	padding-top:15px;
+    font-family: Arial, sans-serif;
+    color:#484848;    
+    font-size:12px;
+}
+.eventItem:first-child{
+	border-top: 0px;	
+	padding-top:5px;
+
+}
+.eventItem .eventDateIcon{
+	float:left;
+	width:40px;
+	margin-top:5px;
+}
+.eventItem .eventDetails{
+	margin-left:40px;	
+}
+
+.eventDateIcon .monthRow{
+	background-color:#8495a3;
+	color:#dae8f4;
+    font-family: Arial, sans-serif;
+	font-weight:bold;
+    font-size: 9px;
+    text-transform:uppercase;
+    width:25px;
+    text-align:center;
+}
+.eventDateIcon .dateRow{
+    border-left: 2px solid #8495a3;
+	border-right: 2px solid #8495a3;
+	border-bottom: 2px solid #8495a3;
+    font-family: Arial, sans-serif;
+		font-weight:bold;
+    	font-size: 12px;
+		text-align:center;
+		color:#8495a3;
+		border-top:0px;
+		width:21px;
+		height:16px;
+}
+.eventItem .eventTitle{
+	text-transform:uppercase;
+	color:#3a5a78;
+	font-weight:bold;
+}
+.eventItem .eventDate{
+	font-weight:bold;
+	padding-top:5px;	
+}
+.eventItem .eventTime{
+	font-weight:bold;
+}
+
+.eventItem .eventLocation{
+	font-weight:bold;	
+	font-style:italic;		
+}
+.eventItem .eventAddCalendarLink{
+	padding-top:3px;		
+}
+</style>
+
+<script>
+$(document).ready(function(){
+	'use strict';
+	var currentDate = new Date();
+	//console.log(currentDate);
+	var listGuid = "FCA67497-A846-4CE1-860E-ED99099BBD2E"; //add your list guid
+	currentDate = moment(currentDate).format("YYYY-MM-DD");
+
+	$.ajax({
+		url: _spPageContextInfo.webAbsoluteUrl + "/_vti_bin/ListData.svc/Events?select=*&$filter=StartTime+ge+datetime'"+currentDate+"'&$top=3&$orderby=StartTime asc",
+		method: "GET",
+		headers: { "Accept": "application/json; odata=verbose" },
+		success: getUserSuccess,
+		error: getUserError
+	});
+	 
+	function getUserSuccess(data, request) {
+		//console.log(data);
+		//debugger;
+		var html = [];
+		var results = data.d;
+		var site = getUrl();
+		for (var i = 0; i < results.length; i++) {	
+			var calendarEventDate = moment(results[i].StartTime).utcOffset(0).format('LT - ');
+			var calendarEndDate = moment(results[i].EndTime).utcOffset(0).format('LT');
+			html.push("<div class='eventItem'>");
+			html.push("<div class='eventDateIcon'><div class='monthRow'>" + moment(results[i].EventDate).format('MMM') + "</div>");	
+			html.push("<div class='dateRow'>" + moment(results[i].EventDate).format('D') + "</div></div>");					
+			html.push("<div class='eventDetails'><div class='eventTitle'><a href=\"#\" onclick=\"javascript:dialogfunction('"+_spPageContextInfo.webAbsoluteUrl+"/Lists/Events/DispForm.aspx?ID=" + results[i].Id + "'); return false;\">" + results[i].Title + "</a></div>");
+			html.push("<div class='eventDate'>" + moment(results[i].EventDate).format('dddd, MMMM Do YYYY') + "</div>");
+			html.push("<div class='eventTime'>" + calendarEventDate + calendarEndDate + " </div>");
+			html.push("<div class='eventLocation'>" + results[i].Location + "</div>");
+			if(results[i].Description){
+			html.push("<div class='eventDescription'>" + results[i].Description + "</div>");
+			}
+			html.push("<div class='eventAddCalendarLink'><a href='" + site + "_vti_bin/owssvr.dll?CS=109Cmd=Display&List="+listGuid+"&CacheControl=1&ID=" + results[i].Id + "&Using=event.ics'>Add to calendar</a></div>");
+			html.push("</div></div>");
+
+			
+		}
+		$('#Events').append(html.join(''));
+	}
+	 
+	function getUserError(error) {
+		alert("error");
+	}
+	function getUrl(){
+	var currentUrl = location.href.substring(0, location.href.lastIndexOf('/'));
+	if( currentUrl.indexOf('/Pages') > -1){
+		currentUrl = currentUrl.replace('Pages','');
+	}
+	if( currentUrl.indexOf('/SitePages') > -1){
+		currentUrl = currentUrl.replace('SitePages','');
+	}
+	return currentUrl;
+}
+	});
+	
+    function dialogfunction(pageUrl) {
+
+    var options = { url: pageUrl, width: 800, height: 600 };
+
+    SP.SOD.execute('sp.ui.dialog.js', 'SP.UI.ModalDialog.showModalDialog', options);
+
+    }
+
+</script>
+<body>
+    <div id="Events" />
+</body>
