@@ -1,2 +1,2 @@
 # businessjs
-This repo accompanies my talk at the CT SharePoint Users Group on adding JavaScript to your SharePoint Business Solutions
+This repo accompanies my talk at various SharePoint Saturday events where I talk about building amazing SharePoint Business Solutions using Client Side JavaScript.

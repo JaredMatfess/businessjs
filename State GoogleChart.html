@@ -11,8 +11,9 @@ $(document).ready(function() {
     		url: _spPageContextInfo.webAbsoluteUrl + "/_api/search/query?querytext='ContentType=Item'&refiners='RefinableString102'",
     		method: "GET",
     		headers: {"accept": "application/json;odata=verbose"},
-			success: function(xData, request){
+				success: function(xData, request){
 		      
+					//This is getting the counts based on the refiners (RefinableString02)
 		      results = xData.d.query.PrimaryQueryResult.RefinementResults.Refiners.results[0].Entries.results;
 
 		      google.charts.load('current', {'packages':['corechart']});
@@ -20,25 +21,26 @@ $(document).ready(function() {
 			  	
 		      function drawChart() {		        
 		        
-				var data = new google.visualization.DataTable();
+					var data = new google.visualization.DataTable();
 			  	// Add columns
 			  	data.addColumn('string', 'Department');
 			  	data.addColumn('number', 'Expenditures');
-				//Add rows
+					//Add rows
 			  	data.addRows(results.length);
 			  	for(var i=0;i<results.length;i++){
 					data.setCell(i, 0, results[i].RefinementName);
 					data.setCell(i, 1, results[i].RefinementCount);	 
-				}       
-		        var options = {
-		          title: 'State Budget'
-		        };
-		
-		        var chart = new google.visualization.ScatterChart(document.getElementById('scatterchart'));
-		
-		        chart.draw(data, options);
-		        }
-		      }
+					}
+					//Sets the title of the chart       
+					var options = {
+						title: 'State Budget'
+					};
+					
+					var chart = new google.visualization.ScatterChart(document.getElementById('scatterchart'));
+					//Create the scatter chart on the page
+					chart.draw(data, options);
+					}
+				}
 });
 });
     </script>

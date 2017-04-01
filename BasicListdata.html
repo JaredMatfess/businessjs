@@ -9,7 +9,7 @@ $(document).ready(function() {
 			success: function(xData, request){
 				var q = JSON.stringify(xData.d);
 				$('div#WebDetails').append(q); //Append stringifyed text to WebDetails DIV 
-            	console.log(xData); //Log xData to console
+            	console.log(xData); //Log xData to console for viewing only
         	},    	
         	error: function(message){
     			console.log(message); //Error message for AJAX call
