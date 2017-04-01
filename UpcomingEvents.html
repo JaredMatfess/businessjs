@@ -80,7 +80,6 @@ time.icon:hover, time.icon:focus
 
 .eventItem{
 	clear:both;
-	border-top: 1px solid #b8d4ea;
 	padding-bottom:15px;
 	padding-top:15px;
     font-family: Arial, sans-serif;
@@ -93,7 +92,7 @@ time.icon:hover, time.icon:focus
 }
 
 .eventDetails{
-	padding-left: 10px;
+	padding-left: 15px;
 	display: inline-block;
 }
 </style>
@@ -121,26 +120,21 @@ $(document).ready(function(){
 		var results = data.d;
 		var site = getUrl();
 		for (var i = 0; i < results.length; i++) {	
-			console.log(results);
+			//console.log(results);
 			var calendarEventDate = moment(results[i].StartTime).utcOffset(0).format('LT - ');
 			var calendarEndDate = moment(results[i].EndTime).utcOffset(0).format('LT');
 
 			html.push("<div class='eventItem'>");
 			var dayOfWeek = moment(results[i].StartTime).format('ddd'); //Day of the dayOfWeek
 			var month = moment(results[i].StartTime).format('MMM');
-			var dayNumber = moment(results[i].StartTime).format('D');
-			//html.push("<div class='dateRow'>" + moment(results[i].EventDate).format('D') + "</div></div>");					
+			var dayNumber = moment(results[i].StartTime).format('D');				
 			html.push("<time datetime='"+results[i].StartTime+"' class='icon'><em>"+dayOfWeek+"</em><strong>"+month+"</strong><span>"+dayNumber+"</span></time></div>");
-			
 			html.push("<div class='eventDetails'><div class='eventTitle'><a href=\"#\" onclick=\"javascript:dialogfunction('"+_spPageContextInfo.webAbsoluteUrl+"/Lists/Events/DispForm.aspx?ID=" + results[i].Id + "'); return false;\">" + results[i].Title + "</a></div>");
 			html.push("<div class='eventDate'>" + moment(results[i].StartTime).format('dddd, MMMM Do YYYY') + "</div>");
 			html.push("<div class='eventTime'>" + calendarEventDate + calendarEndDate + " </div>");
 			html.push("<div class='eventLocation'>" + results[i].Location + "</div>");
-			if(results[i].Description){
-			html.push("<div class='eventDescription'>" + results[i].Description + "</div>");
-			}
 			html.push("<div class='eventAddCalendarLink'><a href='" + site + "_vti_bin/owssvr.dll?CS=109Cmd=Display&List="+listGuid+"&CacheControl=1&ID=" + results[i].Id + "&Using=event.ics'>Add to calendar</a></div>");
-			html.push("</div></div>");
+			html.push("</div></div><br />");
 
 			
 		}
